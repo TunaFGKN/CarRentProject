@@ -10,7 +10,11 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            CarTest();
+            UserManager userManager = new UserManager(new EfUserDal());
+            userManager.Add(new User { Id = 1, FirstName = "Tuna", LastName = "Figankaplan", Email = "tf@gmail.com", Password = "1234tf" });
+            userManager.Add(new User { Id = 2, FirstName = "Demirkan", LastName = "Bakar", Email = "db@gmail.com", Password = "1234db" });
+            userManager.Add(new User { Id = 1, FirstName = "Engin", LastName = "Demiroğ", Email = "ed@gmail.com", Password = "1234ed" });
+            // CarTest();
             // ColorTest();
             // BrandTest();
         }

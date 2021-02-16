@@ -12,5 +12,14 @@ namespace Business.Constants
         public static string CarsListed = "Cars listed.";
         public static string CarRemoved = "Car removed";
         public static string CarUpdated = "Car updated";
+        public static string CustomerAdded = "Customer added";
+        public static string CustomerCompanyNameInvalid = "Customer company name invalid";
+        public static string CustomerRemoved = "Customer removed";
+        public static string CustomerUpdated = "Customer updated";
+        public static string CustomersListed = "Customers listed";
+        public static string UserAdded = "User added";
+        public static string UserRemoved = "User removed";
+        public static string UserUpdated = "User updated";
+        public static string UsersListed = "Users listed";
     }
 }
