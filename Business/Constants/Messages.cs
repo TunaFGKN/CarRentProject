@@ -21,5 +21,7 @@ namespace Business.Constants
         public static string UserRemoved = "User removed";
         public static string UserUpdated = "User updated";
         public static string UsersListed = "Users listed";
+        public static string ReturnDateNull = "You must return old car to rent a new car";
+        public static string RentalAdded = "Rental added";
     }
 }
