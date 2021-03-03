@@ -23,5 +23,7 @@ namespace Business.Constants
         public static string UsersListed = "Users listed";
         public static string ReturnDateNull = "You must return old car to rent a new car";
         public static string RentalAdded = "Rental added";
+        public static string ImagesAdded = "resim eklendi";
+        public static string FailAddedImageLimit = "Resim limitine erişildi!";
     }
 }
