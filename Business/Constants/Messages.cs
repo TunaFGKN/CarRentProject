@@ -25,5 +25,12 @@ namespace Business.Constants
         public static string RentalAdded = "Rental added";
         public static string ImagesAdded = "resim eklendi";
         public static string FailAddedImageLimit = "Resim limitine erişildi!";
+        public static string AuthorizationDenied = "Authorization denied";
+        public static string UserNotFound = "Kullanıcı bulunamadı";
+        public static string PasswordError = "Şifre hatalı";
+        public static string SuccessfulLogin = "Sisteme giriş başarılı";
+        public static string UserAlreadyExists = "Bu kullanıcı zaten mevcut";
+        public static string UserRegistered = "Kullanıcı başarıyla kaydedildi";
+        public static string AccessTokenCreated = "Access token başarıyla oluşturuldu";
     }
 }
