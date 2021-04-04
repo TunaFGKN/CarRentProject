@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
@@ -7,6 +8,7 @@ using Core.Utilities.Security.JWT;
 using Entities.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -16,10 +18,11 @@ namespace Business.Concrete
         private IUserService _userService;
         private ITokenHelper _tokenHelper;
 
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper)
+        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IUserOperationClaimService userOperationClaimService, ICustomerService customerService)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
+
         }
 
         public IDataResult<User> Register(UserForRegisterDTO userForRegisterDto, string password)
@@ -41,16 +44,14 @@ namespace Business.Concrete
 
         public IDataResult<User> Login(UserForLoginDTO userForLoginDto)
         {
-            var userToCheck = _userService.GetByMail(userForLoginDto.Email);
-            if (userToCheck == null)
-            {
-                return new ErrorDataResult<User>(Messages.UserNotFound);
-            }
+            var userToCheckResult = _userService.GetByMail(userForLoginDto.Email);
+            if (!userToCheckResult.Success) return new ErrorDataResult<User>(userToCheckResult.Message);
 
-            if (!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, userToCheck.PasswordHash, userToCheck.PasswordSalt))
-            {
-                return new ErrorDataResult<User>(Messages.PasswordError);
-            }
+            var userToCheck = userToCheckResult.Data;
+            if (userToCheck == null) return new ErrorDataResult<User>(Messages.UserNotFound);
+
+            if (!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, userToCheck.PasswordHash,
+                userToCheck.PasswordSalt)) return new ErrorDataResult<User>(Messages.PasswordError);
 
             return new SuccessDataResult<User>(userToCheck, Messages.SuccessfulLogin);
         }
@@ -66,9 +67,26 @@ namespace Business.Concrete
 
         public IDataResult<AccessToken> CreateAccessToken(User user)
         {
-            var claims = _userService.GetClaims(user);
-            var accessToken = _tokenHelper.CreateToken(user, claims);
+            var claimsResult = _userService.GetClaims(user);
+            if (!claimsResult.Success) return new ErrorDataResult<AccessToken>(claimsResult.Message);
+            var accessToken = _tokenHelper.CreateToken(user, claimsResult.Data);
+
             return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
+        }
+
+        [SecuredOperation("user")]
+        public IResult IsAuthenticated(string userMail, List<string> requiredRoles)
+        {
+            if (requiredRoles != null)
+            {
+                var user = _userService.GetByMail(userMail).Data;
+                var userClaims = _userService.GetClaims(user).Data;
+                var doesUserHaveRequiredRoles =
+                    requiredRoles.All(role => userClaims.Select(userClaim => userClaim.Name).Contains(role));
+                if (!doesUserHaveRequiredRoles) return new ErrorResult(Messages.AuthorizationDenied);
+            }
+
+            return new SuccessResult();
         }
     }
 }
